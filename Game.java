@@ -15,7 +15,8 @@ package teamgogo;
 public class Game //Main class
 {
     boolean gameEnd=false;
-    private int newAttr,passCount,blackPieces,whitePieces;
+    private int newAttr,blackPieces,whitePieces;
+            private static int passCount;
 GameBoard gmBoard;    
 
     public Game() //constructor 
@@ -25,14 +26,14 @@ GameBoard gmBoard;
         blackPieces=0;
         whitePieces=0;
         gmBoard=new GameBoard();
-//GameBoard gmBoard=new GameBoard();
+GameBoard gmBoard=new GameBoard();
     }
     public void score(){
     }
     public void victory(){
     }
     public void endTurn(){
-    
+        
     }
     public void pass()//This method helps to update the class variable pass
     {
@@ -46,7 +47,8 @@ GameBoard gmBoard;
                 }
     }    
 public void play(){
-    }
+    
+}
     public void quit(){
     
     }
@@ -58,7 +60,10 @@ public void play(){
     public void resetTimer(){
     
     }
-    
+   public static void  setPass(int i){
+       passCount=i;
+   
+   } 
 
 
 }
