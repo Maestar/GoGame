@@ -62,10 +62,10 @@ public class GameBoard {
             }
         }
 
-        GoGameMain.updateScore(playerTurn,tempScore);
+        Game.updateScore(playerTurn,tempScore);
         tempScore=0;
         playerTurn = !playerTurn;
-        GoGameMain.setPass(0);
+        Game.setPass(0);
         return "";
     }
 
