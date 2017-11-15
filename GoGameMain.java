@@ -3,11 +3,12 @@ package goGame;
 //coded by: Tera Benoit main method to run gui.
 import java.awt.*;
 import javax.swing.*;
+
 public class GoGameMain {
 	public static GameUI goFrame = new GameUI();
 	public static void main(String[] args){
 		
-		int[][]gameGrid;
+		//int[][]gameGrid;
 		
 	   
 	   goFrame.setTitle("Go Game");
@@ -16,7 +17,7 @@ public class GoGameMain {
 	   goFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	   goFrame.setVisible(true);
 	   
-	   System.out.println(goFrame.getUpdateStatus());
+	   //System.out.println(goFrame.getUpdateStatus());
 /* testing purposes for making the gui function
  * 
  *      int[][] board = new int[9][9];
@@ -27,20 +28,20 @@ public class GoGameMain {
  *      }
  *      
  *    goFrame.updateUI(board);
+ *    while(true){
+		   
+		   goFrame.removeAll();
+		   goFrame.revalidate();
+		   goFrame.repaint();
+		   }
+		   
  */    
 
 	   //alternative here would be:
 	   //boolean updateStatus = goFrame.getUpdateStatus();
 	   //and then use updateStatus inside the if statement == true
-	   while(true){
-		   
-		   if(goFrame.getUpdateStatus() == true){
-			   System.out.println(goFrame.getUpdateStatus() + "bepis");
-			   gameGrid = goFrame.getBoard();
-			   goFrame.updateUI(gameGrid);
-		   }
-		   
-	   }
+	   
+	   
 	   
 	   
 	 

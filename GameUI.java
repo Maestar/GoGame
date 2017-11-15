@@ -15,7 +15,10 @@ public class GameUI extends JFrame {
 	Game myGame = new Game();
     GameBoard myGameBoard = new GameBoard();
 	JPanel mainFrame = new JPanel();
-	public boolean updateNeeded = false;
+	int errorCode;
+	static final int TURN_TIMER = 1000;
+	int turnTimeLimit = 30;// = myGame.getTimer();
+
 	
 	//Variables displayed by GUI that are fetched from the business code.
 	//String ColorScore = Integer.toString(game.getScore(color));
@@ -42,21 +45,18 @@ public class GameUI extends JFrame {
 	private void showGameUI(int[][] board) {
 	
 		
-		if(mainFrame != null){
-			mainFrame.removeAll();
-		}
-		
 		//Components displayed via the GUI.
         JButton exitbtn = new JButton("Exit >>");
         JButton passbtn = new JButton("Pass Turn");
         passbtn.setAlignmentX(Component.CENTER_ALIGNMENT);	//Aligns the button horizontally.
 
-        JLabel timer = new JLabel("Timer goes Here.");
+        JLabel timer = new JLabel("Time Left: .");
+        JLabel countDown = new JLabel();
 
         JLabel BlkPlayerLabel = new JLabel("Black Player: ");
         JLabel WhtPlayerLabel = new JLabel("White Player: ");
-        JLabel BlkPlayerNameLabel = new JLabel(blkPlayerName);
-        JLabel WhtPlayerNameLabel = new JLabel(whtPlayerName);
+        JLabel BlkPlayerNameLabel = new JLabel(blkPlayerName); //myGame.getPlayerName();
+        JLabel WhtPlayerNameLabel = new JLabel(whtPlayerName); //myGame.GetPlayerName();
 
        	JLabel scoreLabelblk = new JLabel("Score: ");
        	JLabel scoreLabelwht = new JLabel("Score: ");
@@ -167,11 +167,17 @@ public class GameUI extends JFrame {
             	       			//If the button matches the one in the button grid, call move with x,y coordinate
             	       			if (buttonGrid[x][y] == button) {
             	       				System.out.println(x+ " " + y);
-            	       				myGameBoard.move(x, y);
+            	       				errorCode = myGameBoard.move(x, y);
             	       				updatedBoard = myGameBoard.getGameGrid();
-            	       				System.out.println(Arrays.deepToString(updatedBoard));
-            	       				GameUI.this.updateNeeded = true;
-            	       				System.out.println(updateNeeded);
+            	       				
+            	       				//handle the move in the GUI
+            	       				if(errorCode >= 1){
+            	       					printError(errorCode);
+            	       				}
+            	       				else
+            	       					updateUI(updatedBoard, boardPanel);
+            	       				
+            	       				
             	}}}}});
                 boardPanel.add(gridButton);
        		}
@@ -180,21 +186,66 @@ public class GameUI extends JFrame {
 		return boardPanel;
 	}
 	
-	//Receives an updated game board from GameBoard and uses it to update the UI.
-	public void updateUI(int[][] board) {
-		goGrid = board;
-		showGameUI(goGrid);
-		updateNeeded = false;
+	/* #### Timer logic for turns. #### */
+	
+	//Timer timer = new Timer(ONE_SECOND, new ActionListener() {
+	   // public void actionPerformed(ActionEvent evt) {
+	    	//int i = turnTimeLimit;
+
+	       // if (/* thread is done */) {
+	         //   timer.stop();
+	            //...Update the GUI...
+	      //  }
+	  //  }    
+//	});
+	
+	/* #### Methods for Handling Move and Updating the GUI Board #### */
+	
+	//print error messages based on error codes passed back from move.
+	private void printError(int s){
+		int errorCode = s;
+		
+		switch(errorCode){
+		case 1: JOptionPane.showMessageDialog(mainFrame,
+			    "There is Already a Stone there.",
+			    "Move Error",
+			    JOptionPane.ERROR_MESSAGE);
+			
+			break;
+		case 2: JOptionPane.showMessageDialog(mainFrame,
+			    "That move is suicidal!",
+			    "Move Error",
+			    JOptionPane.ERROR_MESSAGE);
+			break;
+		case 3: JOptionPane.showMessageDialog(mainFrame,
+			    "You've Broken the Ko Rule.",
+			    "Move Error",
+			    JOptionPane.ERROR_MESSAGE);
+			break;
+		}
 		
 	}
 	
-	
-
-	public boolean getUpdateStatus(){
-		return updateNeeded;
+	//Receives an updated game board from GameBoard and uses it to update the UI.
+	// Coded by: Tera Benoit -- Hello Professor, this method took me 8 actual hours of constant thinking to figure out.
+	private void updateUI(int[][] board, JPanel frame) {
+		JPanel boardGUI = frame;
+		goGrid = board;
+		//hide board
+		mainFrame.setVisible(false);
+		//clear GUI and Board
+		mainFrame.removeAll();
+		boardGUI.removeAll();
+		//pass new content to the gui
+		showGameUI(goGrid);
+		//redraw GUI
+		mainFrame.revalidate();
+		mainFrame.repaint();
+		boardGUI.revalidate();
+		boardGUI.repaint();
+		//show board
+		mainFrame.setVisible(true);
 	}
 	
-	public int[][] getBoard(){
-		return this.updatedBoard;
-	}
+	
 }
