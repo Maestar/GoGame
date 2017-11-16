@@ -21,7 +21,7 @@ public class GameBoard {
         koRule=false;
     }
     //markus
-    public String move(int xPostion, int yPostion) {
+    public int move(int xPostion, int yPostion) {
         int [][] backUp = new int [9][9];
         for (int i = 0; i < gameGrid.length; i++) {
                 for (int k = 0; k < gameGrid.length; k++) {
@@ -29,12 +29,13 @@ public class GameBoard {
                 }
         }
         
-        if (playerTurn)
+        if (Game.getPlayerTurn()) // calls Game.getPlayerTurn to get the turn of the player true for white and false for black
             piece = 2;
         else
             piece = 1;
+        
         if (gameGrid[xPostion][yPostion] != 0)
-            return "Stone already their";
+            return 1;
         
         gameGrid[xPostion][yPostion] = piece;
      
@@ -42,7 +43,7 @@ public class GameBoard {
         
         if(surround(xPostion,yPostion)){// checks if the move is sucide move if true then changes the board back to befor the piece was place and return Sucide move
             gameGrid=backUp;
-            return "Sucide move";
+            return 2;
         }
         
         if(koRule){
@@ -64,7 +65,7 @@ public class GameBoard {
                     gameGrid[i][k]=backUp[i][k];
                 }
             }
-            return "Ko Rule broke";
+            return 3;
         }
         
         if(tempScore==1){
@@ -81,7 +82,7 @@ public class GameBoard {
         tempScore=0;
         playerTurn = !playerTurn;
         Game.setPass(0);
-        return "";
+        return 0;
     }
     //markus
     private boolean surround(int xPostion, int yPostion) {//a move is suicide if no open space is around the piece or its group 
