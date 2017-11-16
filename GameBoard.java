@@ -1,6 +1,5 @@
 public class GameBoard {
 
-    boolean playerTurn;
     int[][] gameGrid = new int[9][9];
     int[][] gameGridPast = new int[9][9];
     int piece;
@@ -8,7 +7,6 @@ public class GameBoard {
     boolean koRule;
 
     GameBoard() { // set all the valiables
-        playerTurn = false;
 
         for (int i = 0; i < gameGrid.length; i++) {
             for (int k = 0; k < gameGrid.length; k++) {
@@ -80,7 +78,7 @@ public class GameBoard {
 
         Game.updateScore(playerTurn,tempScore);
         tempScore=0;
-        playerTurn = !playerTurn;
+        Game.playerTurnNext();
         Game.setPass(0);
         return 0;
     }
