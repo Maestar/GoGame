@@ -4,7 +4,16 @@ Software Engineering Project
                                                    == GAME UI PROGRESS ==
 Currently the main method file should control and call all the ui classes, which should in return call and control all the business class classes. 
 
-GameUI is 75% complete for our first pass, it just needs the game grid and the logic for the grid. 
+GameUI is 95% complete. Two methods missing is all. 
+
+++UPDATES++
+  -game grid logic added
+  -grid visuals added
+  -Grid interaction complete
+  
+++TO-DO++
+  -finish timer method
+  -add whose turn indicator
 
 ****Needed methods from game and gameboard****
 
