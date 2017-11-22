@@ -124,7 +124,7 @@ public class GameBoard {
                 gameGrid[xPostion][yPostion]=tempPiece;
                 return false;
             }
-        }if(yPostion-1>=8)// make sure the index is in bound
+        }if(yPostion-1>=0)// make sure the index is in bound
             if (gameGrid[xPostion][yPostion-1]==tempPiece){// checks the piece at y-1
                 gameGrid[xPostion][yPostion]=3;
             if(surround(xPostion,yPostion-1)){
