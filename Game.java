@@ -1,9 +1,7 @@
 package goGame;
 
-import com.mysql.jdbc.Connection;
-import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.sql.DriverManager;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 /*
@@ -16,39 +14,45 @@ In this file, Sanjay declare the function and me(akash) defines the function, we
 */
 
 
-/**
- *
- * @author akash
- */
 public class Game //Main class
 {
-    String name;
+
+    
     boolean gameEnd=false;
-    private int newAttr,blackPieces,whitePieces;
-    public static int passCount;
-    public static String player1,player2,currentPlayer;
-    public static int player1Color,player2Color;
-    public static int timer;
-    GameBoard gmBoard;    
-    static int play1;
-    static int play2;
-    static int playerTurn=0;
+    private int newAttr,blackPieces,whitePieces,loginCount;
+    private static String username,password;
+    private static String currentPlayername,str1,str2;
+    private static int playerTurn,passCount;
+    ArrayList list; 
+GameBoard gmBoard;    
+
+    
     public Game() //constructor 
     {
-        play1=0;
+        player1Color=1;
+        player2Color=2;
+        
+       	play1=0;
         play2=0;
         newAttr=0;
         passCount=0;
+        loginCount=0;
         blackPieces=0;
         whitePieces=0;
-        
-        player1="akash";
-        player2="sanjay";
-        player1Color=1;
-        player2Color=2;
-        timer=25;
+        username="sanjay";
+        password="adhikari";
         gmBoard=new GameBoard();
+        list = new ArrayList();
 //GameBoard gmBoard=new GameBoard();
+        
+        DBConnect connect = new DBConnect(); 
+        connect.getData();
+        list=connect.list; 
+        
+        System.out.println("Here in GAME:");
+        for(int i=0;i<list.size();i++){
+            System.out.println(list.get(i));
+        }
     }
     
     public static void updateScore(int t,int score ){
@@ -57,78 +61,95 @@ public class Game //Main class
             System.out.println(play2+"score1 "+player1);
         }
         else  
-            play2+=score;
         System.out.println(play2+"score2 "+player2);
+            play2+=score;
         
         }
+    
+    public String getPlayerName(){
+        str1 = "sanjay";
+        str2 = "akash";
+        loginCount++;
+        if(loginCount%2==1)
+            return str1;
+        else
+            return str2;
+    }
     
     public void score(){
     }
-    public void victory(){
+    
+    public void login(){
+        DBConnect connect = new DBConnect(); 
+        connect.getData();
     }
+    }
+    public void victory(){
+    
     public void endTurn(){
     
     }
+    
     public void pass()//This method helps to update the class variable pass
-    {
+        {
         if (this.passCount==0){
                
         passCount++;
-        System.out.println(passCount+"1st pass");
+        JOptionPane.showMessageDialog(null, 
+                              "You pressed the Pass Button", 
+                              "Pass", 
+                              JOptionPane.WARNING_MESSAGE); 
         this.endTurn();
         }else{
-        
-                
-        System.out.println(passCount+"2nd pass");
-         endGame();       
-        }
+        JOptionPane.showMessageDialog(null, 
+                              "This is the second consucutive pass. So Game is finished", 
+                              "End Game", 
+                              JOptionPane.WARNING_MESSAGE); 
+        endGame();        
+                }
     }    
-public void play(){
+    public static void resetPass() 
+        {
+        passCount=0;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    public void quit(){
     
+    public void play()
+        {
     }
+
+    public static boolean getPlayerTurn() //true for white and false for black
+        {
+        
+        playerTurn++;
+    
+        return(playerTurn%2==0);
+    
+}
+    public static void quit()
+    {
+        JOptionPane.showMessageDialog(null, 
+                              str1 + " currentPlayername", 
+                              "End Game", 
+                              JOptionPane.WARNING_MESSAGE);
+        if(playerTurn==0){
+            JOptionPane.showMessageDialog(null, 
+                              currentPlayername+ " quits the game. So YOU LOST", 
+                              "End Game", 
+                              JOptionPane.WARNING_MESSAGE);
+        }
+    }
+    
     public void endGame()//the GameUI is updated when the endgame happens
-    { 
-        System.out.print(GameBoard.tempScore);
-        //connection();//database connection to save data.
-       JOptionPane.showMessageDialog(null,"","END",JOptionPane.INFORMATION_MESSAGE);
+        { 
         this.gameEnd=true;
     }
     
-    public void resetTimer(){
-        
+    public void resetTimer()
+        {
+    
     }
     
-    public static void  resetPass(){
-        passCount=0;
-    }
 
-    public static boolean getPlayerTurn(){
-        
-        playerTurn++;
-        return (playerTurn%2==0);
-    }
-/*private static void connection(){
-    String url = "jdbc:mysql://localhost:3306/";
-        String dbName = "godb";
-        String userName = "gouser"; 
-        String password = "gopass";
-        
-        Connection db = null;
-try
-{
-            System.out.println("Connected to the DB");
-            db = (Connection) DriverManager.getConnection(url+dbName,userName,password);
-    Statement query = (Statement) db.createStatement(); 
-    //query.executeUpdate("insert into goodb(playerName,playerPassword,isAdmin,playerColor,timer) values('akash', 'aa',false,1,12) where playerName="+);
 
-    db.close();
-            System.out.println("closed connection");
-        } catch (SQLException ex) {
-            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-}
-*/
 }
