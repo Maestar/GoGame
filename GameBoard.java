@@ -3,9 +3,9 @@ public class GameBoard {
     int[][] gameGrid = new int[9][9];
     int[][] gameGridPast = new int[9][9];
     int piece;
-    int tempScore;
+    public static int  tempScore;
     boolean koRule;
-
+    int turn;
     GameBoard() { // set all the valiables
 
         for (int i = 0; i < gameGrid.length; i++) {
@@ -36,6 +36,7 @@ public class GameBoard {
             return 1;
         
         gameGrid[xPostion][yPostion] = piece;
+        
      
         capture(xPostion,yPostion);
         
@@ -43,7 +44,6 @@ public class GameBoard {
             gameGrid=backUp;
             return 2;
         }
-        
         if(koRule){
             for (int i = 0; i < gameGrid.length; i++) {
                 for (int k = 0; k < gameGrid.length; k++) {
@@ -76,11 +76,13 @@ public class GameBoard {
         }
         
 
-        Game.updateScore(playerTurn,tempScore);
+        Game.updateScore(Game.getPlayerTurn(),tempScore);
         tempScore=0;
         Game.playerTurnNext();
         Game.setPass(0);
+        Game.resetPass();
         return 0;
+        
     }
     //markus
     private boolean surround(int xPostion, int yPostion) {//a move is suicide if no open space is around the piece or its group 
@@ -155,7 +157,7 @@ public class GameBoard {
             if(gameGrid[xPostion][yPostion+1]==opPiece)
                 if(surround(xPostion,yPostion+1))
                     take(xPostion,yPostion+1);
-        if(yPostion-1<=8)
+        if(yPostion-1>=0)
             if(gameGrid[xPostion][yPostion-1]==opPiece)
                 if(surround(xPostion,yPostion-1))
                     take(xPostion,yPostion-1);
@@ -196,5 +198,12 @@ public class GameBoard {
    public int[][] getGameGrid(){
        return gameGrid;
    }
-
+    public void resetBoard(){
+       for (int i = 0; i < gameGrid.length; i++) {
+          for (int k = 0; k < gameGrid.length; k++) {
+              gameGrid[i][k] = 0;
+              gameGridPast[i][k] = 0;
+          }
+      }
+  }
 }
