@@ -82,6 +82,14 @@ public class Game //Main class
         else return player2Score;
     }
     
+    public int getBlkScore(){
+        return player1Score;    
+    }
+    
+    public int getWhtScore(){
+        return player2Score;
+    }
+    
     public void pass()//This method helps to update the class variable pass
     {
         if (this.passCount==0){
