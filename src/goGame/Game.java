@@ -118,14 +118,14 @@ public class Game //Main class
         playerTurn=!playerTurn;
     return playerTurn;
     }
-    public static String victory(){
+     public static int victory(){
     if (player1Score>player2Score){
-        return player1+" win with "+player1Score+" score";
-    }else if(player2Score<player1Score)
-        return player2+" win with "+player2Score+" score";
+        return 1; //player 1 wins
+    }else if(player2Score>player1Score)
+        return 2; //player 2 wins
         else
-        return "draw";
-}
+        return 3; //draw
+    }
     //new user validation
     public boolean checkUser(String user1,String user2,String pass1,String pass2){
     return (connect.checkUser(user1,pass1,0) && connect.checkUser(user2, pass2,0));
