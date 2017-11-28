@@ -62,7 +62,7 @@ public class GoGameUI extends JFrame {
 
     //Variables displayed by GUI that are fetched from the business code.
     JLabel scoreAmtWht = new JLabel();
-   	JLabel scoreAmtBlk = new JLabel();
+    JLabel scoreAmtBlk = new JLabel();
 
     String blkPlayerName = "Player 01";
     String whtPlayerName = "Player 02";
@@ -139,13 +139,41 @@ public class GoGameUI extends JFrame {
         turnTimer.start();
 
         //Action listener for the pass button (calls pass() in game).
-        passbtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                myGame.pass();
-                //This changes the player turn.
-
-            }
-        });
+	passbtn.addActionListener(new ActionListener(){
+		public void actionPerformed(ActionEvent e) {
+	            if(myGame.getPassCount() >= 1){
+	            		
+	            	switch(myGame.victory()){
+	            	case 1: JOptionPane.showMessageDialog(gamePanel,
+	        		userInput1 + " is victorious with a score of " + myGame.getScore(false),
+	        			"Victory", JOptionPane.PLAIN_MESSAGE);
+	            			break;
+	            				
+	            	case 2:JOptionPane.showMessageDialog(gamePanel,
+	        		userInput2 + " is victorious with a score of " + myGame.getScore(true),
+	        		"Victory", JOptionPane.PLAIN_MESSAGE);
+	            			break;
+	            				
+	            	case 3:JOptionPane.showMessageDialog(gamePanel,
+	        		"It's a draw!",
+	        		"Victory", JOptionPane.PLAIN_MESSAGE);
+	            			break;
+	            		}
+	            		
+	            		resetGame();
+	            		remove(gamePanel);
+	            		add(titlePanel);
+	            			
+	            	}
+	            	else{
+	                myGame.pass();
+	                updateUI(updatedBoard, boardPanel);
+	            	}
+	                //This changes the player turn.
+	                
+	                
+	            }
+	        });
 
         //Action listener for the exit button (calls quit() in game).
         exitbtn.addActionListener(new ActionListener() {
