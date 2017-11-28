@@ -34,11 +34,15 @@ public class GoGameUI extends JFrame {
 
     String userPass1;
     String userPass2;
+    
     JTextField usernameField1 = new JTextField(10);
     JTextField usernameField2 = new JTextField(10);
 
     JPasswordField passwordField1 = new JPasswordField(10);
     JPasswordField passwordField2 = new JPasswordField(10);
+    
+    JLabel BlkPlayerNameLabel = new JLabel(); 
+    JLabel WhtPlayerNameLabel = new JLabel(); 
 
     //variables for the admin login screen
     String adminName;
@@ -57,10 +61,8 @@ public class GoGameUI extends JFrame {
     private boolean playerTurn = false;
 
     //Variables displayed by GUI that are fetched from the business code.
-    //String ColorScore = Integer.toString(game.getScore(color));
-    String blkScore = Integer.toString(myGame.getScore(false));
-    String whtScore = Integer.toString(myGame.getScore(true));
-    //String ColorName = game.getPlayer(color);
+    JLabel scoreAmtWht = new JLabel();
+   	JLabel scoreAmtBlk = new JLabel();
 
     String blkPlayerName = "Player 01";
     String whtPlayerName = "Player 02";
@@ -109,18 +111,12 @@ public class GoGameUI extends JFrame {
 
         JLabel BlkPlayerLabel = new JLabel("Black Player: ");
         JLabel WhtPlayerLabel = new JLabel("White Player: ");
-        String blkScore = Integer.toString(Game.getScore(false));
-        String whtScore = Integer.toString(Game.getScore(true));
-
-        JLabel BlkPlayerNameLabel = new JLabel(Game.player1); //myGame.getPlayerName();
-        JLabel WhtPlayerNameLabel = new JLabel(Game.player2); //myGame.GetPlayerName();
 
         JLabel scoreLabelblk = new JLabel("Score: ");
         JLabel scoreLabelwht = new JLabel("Score: ");
-        System.out.println("blkScoreUI " + blkScore);
-        System.out.println("whiteScoreUI " + whtScore);
-        JLabel scoreAmtWht = new JLabel(whtScore);
-        JLabel scoreAmtBlk = new JLabel(blkScore);
+        
+        scoreAmtWht.setText(Integer.toString(myGame.getScore(true)));
+	    scoreAmtBlk.setText(Integer.toString(myGame.getScore(false)));
 
         //timer for countDown
         turnTimer = new Timer(TURN_TIMER, new ActionListener() {
@@ -904,7 +900,10 @@ public class GoGameUI extends JFrame {
     public void getCreds(JTextField usrname, JTextField usrname2, JPasswordField pass, JPasswordField pass2) {
         userInput1 = usrname.getText().toString();
         userInput2 = usrname2.getText().toString();
-
+        
+        BlkPlayerNameLabel.setText(userInput1);
+        WhtPlayerNameLabel.setText(userInput2);
+        
         userPass1 = new String(pass.getPassword());
         userPass2 = new String(pass2.getPassword());
 
