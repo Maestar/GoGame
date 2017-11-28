@@ -75,19 +75,11 @@ public class Game //Main class
         
         }
     
-    public static int getScore(boolean color){
+    public int getScore(boolean color){
         if (color==false){
             return player1Score;
         }
         else return player2Score;
-    }
-    
-    public int getBlkScore(){
-        return player1Score;    
-    }
-    
-    public int getWhtScore(){
-        return player2Score;
     }
     
     public void pass()//This method helps to update the class variable pass
