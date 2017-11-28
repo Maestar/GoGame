@@ -1,30 +1,21 @@
-package goGame;
-
-import com.mysql.jdbc.Connection;
-//import static goGame.DBConnect.list;
-import java.sql.*;
-import java.util.ArrayList;
-//import static java.util.Collections.list;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
-
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-/*
-In this file, Sanjay declare the function and me(akash) defines the function, we did kind of pair programming//
+File Name: Game.java
+Description: Use to handle all the database connection and queries
+Authors: Sanjay And Akash
+
 */
 
+package goGame;
 
-/**
- *
- * @author akash
- */
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+
 public class Game //Main class
 {
+    /*
+        Author: Sanjay
+        Description: class definition along with its member variables and methods
+    */
     String name;
     boolean gameEnd=false;
     private int newAttr,blackPieces,whitePieces;
@@ -38,21 +29,27 @@ public class Game //Main class
     static int player2Score;
     static ArrayList list;
     DBConnect connect;
-//static int playerTurn=0;
+
     static boolean playerTurn=false;//false for black
     
     public Game() //constructor 
     {
-         connect= new DBConnect();
+        /*
+        Author: Sanjay
+        Description: used to connect the system with the database
+        */
+        
+        connect= new DBConnect();
         player1Score=0;
         player2Score=0;
+        
         newAttr=0;
         passCount=0;
         blackPieces=0;
         whitePieces=0;
         player1Color=1;
         player2Color=2;
-        timer=25;
+        timer=connect.gettimer();
         gmBoard=new GameBoard();
         list = new ArrayList();
         
@@ -64,8 +61,14 @@ public class Game //Main class
         }
     }
     
-    public static void updateScore(boolean t,int score ){
-        if(t==false){
+    public static void updateScore(boolean white,int score )
+    {
+        /*
+        Author: Akash
+        Description: used to update the score
+        */
+        
+        if(white==false){
             player1Score+=score;
             System.out.println(player1Score+"score blackPlayer "+player1);
         }
@@ -75,66 +78,134 @@ public class Game //Main class
         
         }
     
-    public static int getScore(boolean color){
+    public static int getScore(boolean color)
+    {
+        /*
+        Author: Sanjay and akash
+        Description: used to return the player color
+        */
         if (color==false){
             return player1Score;
         }
         else return player2Score;
     }
     
-    public void pass()//This method helps to update the class variable pass
+    public void pass()
     {
+        /*
+        Author: Akash
+        Description: This method helps to update the class variable pass
+        */
+        
         if (this.passCount==0){
                
         passCount++;
+        playerTurnNext();
         }else{
          endGame();       
         }
     }    
-    public void quit(){
     
-    }
-    public void endGame()//the GameUI is updated when the endgame happens
+    public void endGame()
     { 
-        System.out.print(GameBoard.tempScore);
-        //connection();//database connection to save data.
-       JOptionPane.showMessageDialog(null,"",victory(),JOptionPane.INFORMATION_MESSAGE);
+        /*
+        Author: Sanjay
+        Description: set score into database after the game ends
+        */
+        
+        connect.setScore(player1, player1Score, player1Color);
+        connect.setScore(player2, player2Score, player2Color);
+        JOptionPane.showMessageDialog(null,"Game is end","GAME END",JOptionPane.INFORMATION_MESSAGE);
+        
         this.gameEnd=true;
-    }
-    
-    public void resetTimer(){
         
     }
     
+    public int getTimer()
+    {
+        /*
+        Author: Sanjay
+        Description: get timer from the database
+        */
+        return(connect.gettimer());
+    }
     
+    public void updateTimer(int timer)
+    {
+        /*
+        Author: Sanjay
+        Description: set timer into database after the successful admin login
+        */
+        connect.setTimer(timer);
+        
+    }
     
     public static void  resetPass(){
+        /*
+        Author: Akash
+        Description: reset the pass value after 2nd pass is not done consecutively 
+        */
         passCount=0;
     }
+    
     public static boolean getPlayerTurn(){
+        /*
+        Author: Akash
+        Description: get the player turn
+        */
+        
         return playerTurn;
     }
+    
     public static boolean playerTurnNext(){
+        /*
+        Author: Akash
+        Description: get next player turn
+        */
         playerTurn=!playerTurn;
-    return playerTurn;
+        return playerTurn;
     }
-    public static String victory(){
+    
+    public static int victory(){
     if (player1Score>player2Score){
-        return player1+" win with "+player1Score+" score";
-    }else if(player2Score<player1Score)
-        return player2+" win with "+player2Score+" score";
+        return 1; //player 1 wins
+    }else if(player2Score>player1Score)
+        return 2; //player 2 wins
         else
-        return "draw";
-}
-    //new user validation
+        return 3; //draw
+    }
+    
+    public int getPassCount(){
+    	return passCount;
+    }
+    
     public boolean checkUser(String user1,String user2,String pass1,String pass2){
-    return (connect.checkUser(user1,pass1,0) && connect.checkUser(user2, pass2,0));
+        /*
+        Author: Sanjay
+        Description: check user for login and set username into respective players
+        */
+        if(connect.checkUser(user1,pass1) && connect.checkUser(user2, pass2))
+        {
+            player1=user1;
+            player2=user2;
+        }
+        
+        return (connect.checkUser(user1,pass1) && connect.checkUser(user2, pass2));
     }
-    // admin validation
+    
     public boolean checkAdmin(String user,String pass){
-        return (connect.checkUser(user,pass,1));
+        /*
+        Author: Akash
+        Description: admin validation
+        */
+        return (connect.checkAdmin(user,pass));
     }
+    
     public boolean insertUser(String name, String pass){
+        /*
+        Author: Akash
+        Description: admin validation
+        */
         return connect.insertUser(name, pass,0);
         
     }

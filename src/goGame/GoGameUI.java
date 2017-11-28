@@ -23,6 +23,9 @@ public class GoGameUI extends JFrame {
     JPanel gamePanel = new JPanel();
     private int errorCode;
     private static final int TURN_TIMER = 1000;
+    JLabel BlkPlayerNameLabel = new JLabel();
+    JLabel WhtPlayerNameLabel = new JLabel(); 
+    JLabel playerTurn = new JLabel("Black Player's Turn");
 
     //Used by GameBoard.
     JPanel boardPanel = new JPanel();
@@ -49,18 +52,15 @@ public class GoGameUI extends JFrame {
     //This is the length of the turn timer in seconds.
     //It is currently set in the actionlistener in showTimerUI. It can be modified later to draw the timer setting from the database.
     //Change the setting of both of these turnTimeLimits to be a method call to the Database that sets them to equal the saved turn time limit.
-    private int turnTimeLimit = 30;
-    private int turnTimeLimitSaved = 30;
+    private int turnTimeLimit = myGame.getTimer();
+    private int turnTimeLimitSaved = myGame.getTimer();
     private Timer turnTimer;
 
-    //This is the current playerTurn. It starts as false (black).
-    private boolean playerTurn = false;
+    
 
     //Variables displayed by GUI that are fetched from the business code.
-    //String ColorScore = Integer.toString(game.getScore(color));
-    String blkScore = Integer.toString(Game.getScore(false));
-    String whtScore = Integer.toString(Game.getScore(true));
-    //String ColorName = game.getPlayer(color);
+    JLabel scoreAmtWht = new JLabel();
+    JLabel scoreAmtBlk = new JLabel();
 
     String blkPlayerName = "Player 01";
     String whtPlayerName = "Player 02";
@@ -109,18 +109,15 @@ public class GoGameUI extends JFrame {
 
         JLabel BlkPlayerLabel = new JLabel("Black Player: ");
         JLabel WhtPlayerLabel = new JLabel("White Player: ");
-        String blkScore = Integer.toString(Game.getScore(false));
-        String whtScore = Integer.toString(Game.getScore(true));
 
-        JLabel BlkPlayerNameLabel = new JLabel(Game.player1); //myGame.getPlayerName();
-        JLabel WhtPlayerNameLabel = new JLabel(Game.player2); //myGame.GetPlayerName();
+        scoreAmtWht.setText(Integer.toString(myGame.getScore(true)));
+	scoreAmtBlk.setText(Integer.toString(myGame.getScore(false)));
 
         JLabel scoreLabelblk = new JLabel("Score: ");
         JLabel scoreLabelwht = new JLabel("Score: ");
-        System.out.println("blkScoreUI " + blkScore);
-        System.out.println("whiteScoreUI " + whtScore);
-        JLabel scoreAmtWht = new JLabel(whtScore);
-        JLabel scoreAmtBlk = new JLabel(blkScore);
+        //System.out.println("blkScoreUI " + blkScore);
+        //System.out.println("whiteScoreUI " + whtScore);
+        
 
         //timer for countDown
         turnTimer = new Timer(TURN_TIMER, new ActionListener() {
@@ -133,7 +130,7 @@ public class GoGameUI extends JFrame {
                     //...Update the GUI...
                 } else {
                     i = decrement();
-                    updateTimer(countDown, i);
+                    
                     //System.out.println(i);
                 }
 
@@ -143,13 +140,45 @@ public class GoGameUI extends JFrame {
         turnTimer.start();
 
         //Action listener for the pass button (calls pass() in game).
-        passbtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                myGame.pass();
-                //This changes the player turn.
-
-            }
-        });
+	passbtn.addActionListener(new ActionListener()
+	        {
+	            public void actionPerformed(ActionEvent e) {
+	            	if(myGame.getPassCount() >= 1){
+	            		
+	            		switch(myGame.victory()){
+	            		case 1: JOptionPane.showMessageDialog(gamePanel,
+	        				    userInput1 + " is victorious with a score of " + myGame.getScore(false),
+	        				    "Victory",
+	        				    JOptionPane.PLAIN_MESSAGE);
+	            				break;
+	            				
+	            		case 2:JOptionPane.showMessageDialog(gamePanel,
+	        				    userInput2 + " is victorious with a score of " + myGame.getScore(true),
+	        				    "Victory",
+	        				    JOptionPane.PLAIN_MESSAGE);
+	            				break;
+	            				
+	            		case 3:JOptionPane.showMessageDialog(gamePanel,
+	        				    "It's a draw!",
+	        				    "Victory",
+	        				    JOptionPane.PLAIN_MESSAGE);
+	            				break;
+	            		}
+	            		
+	            		resetGame();
+	            		remove(gamePanel);
+	            		add(titlePanel);
+	            			
+	            	}
+	            	else{
+	                myGame.pass();
+	                updateUI(updatedBoard, boardPanel);
+	            	}
+	                //This changes the player turn.
+	                
+	                
+	            }
+	        });
 
         //Action listener for the exit button (calls quit() in game).
         exitbtn.addActionListener(new ActionListener() {
@@ -178,6 +207,7 @@ public class GoGameUI extends JFrame {
 
         topFrame.add(exitbtn, BorderLayout.EAST);
         topFrame.add(topRightFrame, BorderLayout.WEST);
+        topFrame.add(playerTurn, BorderLayout.CENTER);
 
         topRightFrame.add(timer, BorderLayout.WEST);
         topRightFrame.add(countDown, BorderLayout.EAST);
@@ -298,10 +328,12 @@ public class GoGameUI extends JFrame {
     //Tera
     //update the gui to show the number counting down.
     private void updateTimer(JLabel label, int time) {
+        
         label.removeAll();
         label.setText(Integer.toString(time));
         label.revalidate();
         label.repaint();
+        
     }
 
     /* #### Methods for Handling Move and Updating the GUI Board #### */
@@ -336,48 +368,58 @@ public class GoGameUI extends JFrame {
 
     //Receives an updated game board from GameBoard and uses it to update the UI.
     // Coded by: Tera Benoit over two days of constant suffering and bug chasing.
-    private void updateUI(int[][] board, JPanel frame) {
-        JPanel boardGUI = frame;
-        //hide board
-        gamePanel.setVisible(false);
-        //reset timer
-        turnTimeLimit = turnTimeLimitSaved;
-        //clear GUI and Board
-        gamePanel.removeAll();
-        boardGUI.removeAll();
-        //pass new content to the gui
-        showGameUI(board);
-        //redraw GUI
-        gamePanel.revalidate();
-        gamePanel.repaint();
-        boardGUI.revalidate();
-        boardGUI.repaint();
-        //show board
-        gamePanel.setVisible(true);
-
-    }
-
+		private void updateUI(int[][] board, JPanel frame) {
+			JPanel boardGUI = frame;
+			//hide board
+			gamePanel.setVisible(false);
+			//reset timer
+			stopTimer();
+			turnTimeLimit = turnTimeLimitSaved;
+			turnTimer.start();
+			//clear GUI and Board
+			gamePanel.removeAll();
+			boardGUI.removeAll();
+			//pass new content to the gui
+			showGameUI(board);
+			scoreAmtWht.setText(Integer.toString(myGame.getScore(true)));
+	       	        scoreAmtBlk.setText(Integer.toString(myGame.getScore(false)));
+			if(myGame.getPlayerTurn() == false){
+				playerTurn.setText("Black Player's Turn");
+			}
+			else{
+				playerTurn.setText("White Player's Turn");
+			}
+			//redraw GUI
+			gamePanel.revalidate();
+			gamePanel.repaint();
+			boardGUI.revalidate();
+			boardGUI.repaint();
+			//show board
+			gamePanel.setVisible(true);
+		}
+                
     //Coded by Tera.
     //Resets the game board when the game is exited back to title screen.
-    public void resetGame() {
-        //hide board
-        gamePanel.setVisible(false);
-        //reset timer
-        turnTimeLimit = turnTimeLimitSaved;
-        //clear GUI and Board
-        gamePanel.removeAll();
-        boardPanel.removeAll();
-        //pass new content to the gui
-        //myGameBoard.resetBoard();
-        showGameUI(goGrid);
-        //redraw GUI
-        gamePanel.revalidate();
-        gamePanel.repaint();
-        boardPanel.revalidate();
-        boardPanel.repaint();
-        //show board
-        gamePanel.setVisible(true);
-    }
+    public void resetGame(){
+            //hide board
+            gamePanel.setVisible(false);
+            //reset timer
+            turnTimeLimit = turnTimeLimitSaved;
+            //clear GUI and Board
+            gamePanel.removeAll();
+            boardPanel.removeAll();
+            //pass new content to the gui
+            myGameBoard.resetBoard();
+            showGameUI(goGrid);
+            System.out.println("acb");
+            //redraw GUI
+            gamePanel.revalidate();
+            gamePanel.repaint();
+            boardPanel.revalidate();
+            boardPanel.repaint();
+            //show board
+            gamePanel.setVisible(true);
+        }
     // Coded By Tera Benoit
 
     /* ##################### TITLE UI FRAME ########################## */
@@ -411,6 +453,7 @@ public class GoGameUI extends JFrame {
         //For when the user presses "Set Timer".
         timerbtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                
                 remove(titlePanel);
                 add(adminPanel);
                 repaint();
@@ -517,24 +560,37 @@ public class GoGameUI extends JFrame {
                 switch (option) {
                     case "30 seconds":
                         turnTimeLimitSaved = 30;
+                        myGame.updateTimer(turnTimeLimitSaved);
                         break;
                     case "45 seconds":
                         turnTimeLimitSaved = 45;
+                        myGame.updateTimer(turnTimeLimitSaved);
+                        
                         break;
                     case "1 minute":
                         turnTimeLimitSaved = 60;
+                        myGame.updateTimer(turnTimeLimitSaved);
+                        
                         break;
                     case "1.5 minutes":
                         turnTimeLimitSaved = 90;
+                        myGame.updateTimer(turnTimeLimitSaved);
+                        
                         break;
                     case "3 minutes":
                         turnTimeLimitSaved = 180;
+                        myGame.updateTimer(turnTimeLimitSaved);
+                        
                         break;
                     case "5 minutes":
                         turnTimeLimitSaved = 300;
+                        myGame.updateTimer(turnTimeLimitSaved);
+                        
                         break;
                     default:
                         turnTimeLimitSaved = 30;
+                        myGame.updateTimer(turnTimeLimitSaved);
+                        
                 }
             }
         });
@@ -587,7 +643,7 @@ public class GoGameUI extends JFrame {
         //Text fields for the creation of a new user.
         JLabel nameLabel = new JLabel("Username:");
         JTextField nameField = new JTextField(20);
-        JLabel passLabel = new JLabel("New user:");
+        JLabel passLabel = new JLabel("Password: ");
         JPasswordField passField = new JPasswordField(20);
         JButton submit = new JButton("Submit");
 
@@ -904,6 +960,9 @@ public class GoGameUI extends JFrame {
     public void getCreds(JTextField usrname, JTextField usrname2, JPasswordField pass, JPasswordField pass2) {
         userInput1 = usrname.getText().toString();
         userInput2 = usrname2.getText().toString();
+        
+        BlkPlayerNameLabel.setText(userInput1);
+        WhtPlayerNameLabel.setText(userInput2);
 
         userPass1 = new String(pass.getPassword());
         userPass2 = new String(pass2.getPassword());
