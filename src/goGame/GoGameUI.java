@@ -58,8 +58,8 @@ public class GoGameUI extends JFrame {
 
     //Variables displayed by GUI that are fetched from the business code.
     //String ColorScore = Integer.toString(game.getScore(color));
-    String blkScore = Integer.toString(Game.getScore(false));
-    String whtScore = Integer.toString(Game.getScore(true));
+    String blkScore = Integer.toString(myGame.getScore(false));
+    String whtScore = Integer.toString(myGame.getScore(true));
     //String ColorName = game.getPlayer(color);
 
     String blkPlayerName = "Player 01";
