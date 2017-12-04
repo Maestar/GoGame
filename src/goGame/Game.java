@@ -96,6 +96,12 @@ public class Game //Main class
         Author: Akash
         Description: This method helps to update the class variable pass
         */
+        //new code by markus
+        if(playerTurn)
+            player2Score++;
+        else
+            player1Score++;
+        //end of new code
         
         if (this.passCount==0){
                
