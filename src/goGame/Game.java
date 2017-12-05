@@ -129,8 +129,6 @@ public class Game //Main class
         
         newAttr=0;
         passCount=0;
-        blackPieces=0;
-        whitePieces=0;
         player1Color=1;
         player2Color=2;
         timer=connect.gettimer();
