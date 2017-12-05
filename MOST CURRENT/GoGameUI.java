@@ -142,6 +142,8 @@ public class GoGameUI extends JFrame {
 	passbtn.addActionListener(new ActionListener()
 	        {
 	            public void actionPerformed(ActionEvent e) {
+	            	myGame.pass();
+	            	updateUI(updatedBoard, boardPanel);
 	            	if(myGame.getGameEnd() == true){
 	            		//switch shows popups based on who won
 	            		switch(myGame.victory()){ //returns int code on who won
@@ -164,17 +166,14 @@ public class GoGameUI extends JFrame {
 	            				break; //draw
 	            		}
 	            		//this method should save the game record to the database
-	            		myGame.recordGame(userInput1, userInput2, Game.getScore(false), Game.getScore(true), Game.victory());
+	            		//myGame.endGame(userInput1, userInput2, Game.getScore(false), Game.getScore(true), Game.victory());
+	            		myGame.setGameEnd();
 	            		resetGame();
 	            		remove(gamePanel);
 	            		add(titlePanel);
 	            			
 	            	}
-	            	else{
-	                myGame.pass();
-	                updateUI(updatedBoard, boardPanel);
-	            	}
-	                //This changes the player turn.
+	            	
 	                
 	                
 	            }
@@ -411,7 +410,13 @@ public class GoGameUI extends JFrame {
             //pass new content to the gui
             myGameBoard.resetBoard();
             showGameUI(goGrid);
+            myGame.resetScore();
+            myGame.setGameEnd();
+            scoreAmtWht.setText(Integer.toString(myGame.getScore(true)));
+	       	scoreAmtBlk.setText(Integer.toString(myGame.getScore(false)));
             System.out.println("acb");
+            
+            
             //redraw GUI
             gamePanel.revalidate();
             gamePanel.repaint();
@@ -419,6 +424,7 @@ public class GoGameUI extends JFrame {
             boardPanel.repaint();
             //show board
             gamePanel.setVisible(true);
+            
         }
     // Coded By Tera Benoit
 
@@ -737,23 +743,16 @@ public class GoGameUI extends JFrame {
 
         //Action listener for the submit button.
         //It fetches the text in the username field.
+        //jason
         submit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String username = input.getText();
-                if (username==null){
-                    username="*";
-                }    
-//Pass the "username" string to the Database to fetch the appropriate record.
-                //Append the record you received to the text field like this:
-                list = new ArrayList();
-                list = Game.list;
-                System.out.println("record button is clicked");
-                System.out.println(list);
-                DBConnect db=new DBConnect();
-                
-                for (int i = 0; i < 10; i++) {
-                    recordsDisplay.setText(db.getData(username).toString()+'\n'); //Use this to set text (may have to use a loop to set the lines properly.
-                }
+                DBConnect connect = new DBConnect();
+                ArrayList list = connect.getData(username);
+                if(list.get(0) != null) {
+                for(int i = 0; i < list.size(); i++) {
+                	recordsDisplay.setText((String) list.get(i) + "\n");
+                }}
             }
         });
 
