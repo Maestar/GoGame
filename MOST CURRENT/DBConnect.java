@@ -139,38 +139,43 @@ class DBConnect { //Sanjay
     }
     
     
-    public ArrayList getData(String name) 
-    {    
-        /*
-        Authors: Sanjay and Akash
-        Description: this function is declared to fetch score record the database system
-        */
-        
-        try
-        {
-            String query = "select distinct score,playerColor,score.playerName from score join godb where score.playerName='"+name+"';";
-            rs = st.executeQuery(query);
-            
-            System.out.println(query);
-            System.out.println("Records from Database");
-            while(rs.next())
-            {
-                String a=rs.getString("score");
-                String b=rs.getString("playerName");
-                if (rs.getBoolean("playerColor")){
-                list.add(b+ "   "+a+"  white"); // Akash
-                }
-                else
-                    list.add(a+" black");       //Akash
-            }
-            return list;
-        }
-        catch(SQLException ex){
-            System.out.println("Exception: "+ ex);
-            return null;
-        }
-        
-    }
+   public  ArrayList getData(String name)
+	{    
+    	/*
+    	Authors: Sanjay and Akash
+    	Description: this function is declared to fetch score record the database system
+    	*/
+   	 
+    	try
+    	{  	 
+        	String query = "select * from score  where playerName='"+name+"';";
+       	 
+        	rs = st.executeQuery(query);
+       	 
+        	System.out.println(query);
+        	System.out.println("Records from Database");
+        	while(rs.next())
+        	{
+            	String a=rs.getString("playerName");
+            	String b=rs.getString("secondPlayer");
+            	int c=rs.getInt("blkScore");
+            	int d=rs.getInt("whtScore");
+            	int e=rs.getInt("victory");
+            	list.add(a+" "+b+" "+c+" "+d+" "+e); // Akash
+           	 
+           	 
+                      	 
+        	}
+       	 
+        	return list;
+    	}
+    	catch(SQLException ex){
+        	System.out.println("Exception: "+ ex);
+        	return null;
+    	}
+   	 
+	}
+
     
   public void setTimer(int time)
   { 
@@ -218,28 +223,32 @@ class DBConnect { //Sanjay
        }
     }
    
-   public void setScore(String player,int score, int color)
+  public void setScore(String player,String secondPlayer,int blk,int wht, int victory)
    {
-       /*
-        Author: Sanjay
-        Description: this function is declared to set the score value into the database system
-        */
-       
-       try{
-            String query="INSERT into score(score,playerName,playerColor) VALUES(?,?,?)";
-            
-            pstmt=con.prepareStatement(query);
-            pstmt.setInt(1,score);
-            pstmt.setString(2,player);
-            pstmt.setInt(3,color);
-            pstmt.executeUpdate();
+   	/*
+    	Author: Sanjay
+    	Description: this function is declared to set the score value into the database system
+    	*/
+  	 
+   	try{
+        	String query="INSERT into score(playerName,secondPlayer,blkScore,whtScore,victory) VALUES(?,?,?,?,?)";
+       	 
+        	pstmt=con.prepareStatement(query);
+        	pstmt.setString(1,player);
+        	pstmt.setString(2,secondPlayer);
+        	pstmt.setInt(3,blk);
+        	pstmt.setInt(4,wht);
+        	pstmt.setInt(5,victory);
+       	 
+        	pstmt.executeUpdate();
 
-       }
-       catch(Exception e)
-       {
-           System.out.println(e);
-       }
-       
+   	}
+   	catch(Exception e)
+   	{
+       	System.out.println(e);
+   	}
+  	 
    }
+
     }
 

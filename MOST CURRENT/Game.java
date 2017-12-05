@@ -187,14 +187,19 @@ public class Game //Main class
         return playerTurn;
     }
     
-    public static int victory(){
-    if (player1Score>player2Score){
-        return 1; //player 1 wins
-    }else if(player2Score>player1Score)
-        return 2; //player 2 wins
-        else
-        return 3; //draw
-    }
+ 
+	public  int victory(){
+    	int sc;
+    	if (player1Score>player2Score){
+    	sc= 1; //player 1 wins
+		}else if(player2Score>player1Score)
+    	sc= 2; //player 2 wins
+    	else
+    	sc= 3; //draw
+    	connect.setScore(player1,player2,player1Score,player2Score,sc);
+		return sc;
+	}
+
     
     public int getPassCount(){
     	return passCount;
