@@ -63,7 +63,7 @@ public class Game //Main class
     public static void updateScore(boolean white,int score )
     {
         /*
-        Author: Akash
+        Author: Smit
         Description: used to update the score
         */
         
