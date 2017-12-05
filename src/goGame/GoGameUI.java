@@ -142,6 +142,8 @@ public class GoGameUI extends JFrame {
 	passbtn.addActionListener(new ActionListener()
 	        {
 	            public void actionPerformed(ActionEvent e) {
+		  	myGame.pass();
+			updateUI(updatedBoard, boardPanel);
 	            	if(myGame.getGameEnd() == true){
 	            		//switch shows popups based on who won
 	            		switch(myGame.victory()){ //returns int code on who won
@@ -171,10 +173,7 @@ public class GoGameUI extends JFrame {
 	            		add(titlePanel);
 	            			
 	            	}
-	            	else{
-	                myGame.pass();
-	                updateUI(updatedBoard, boardPanel);
-	            	}
+	            	
 	                //This changes the player turn.
 	                
 	                
