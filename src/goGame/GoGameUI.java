@@ -1,5 +1,4 @@
 package goGame;
-
 /* Coded by Jason Miller and Tera Benoit
  * This class creates/updates the UI elements of the game and its game board. */
 import static goGame.Game.list;
@@ -75,6 +74,7 @@ public class GoGameUI extends JFrame {
     JPanel adminPanel = new JPanel();
 
     //constructor that builds the UI
+    
     GoGameUI() {
         //Initializes the goGrid to have no pieces (all 0s).
         for (int x = 0; x < 9; x++) {
@@ -111,27 +111,26 @@ public class GoGameUI extends JFrame {
         JLabel WhtPlayerLabel = new JLabel("White Player: ");
 
         scoreAmtWht.setText(Integer.toString(myGame.getScore(true)));
-	scoreAmtBlk.setText(Integer.toString(myGame.getScore(false)));
+        scoreAmtBlk.setText(Integer.toString(myGame.getScore(false)));
 
         JLabel scoreLabelblk = new JLabel("Score: ");
         JLabel scoreLabelwht = new JLabel("Score: ");
-        //System.out.println("blkScoreUI " + blkScore);
-        //System.out.println("whiteScoreUI " + whtScore);
         
+        //int counter = turnTimeLimit;
 
         //timer for countDown
         turnTimer = new Timer(TURN_TIMER, new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                int i = turnTimeLimit;
+                int counter = turnTimeLimit;
 
-                if (i <= 0) {
-                    stopTimer();
+                if (counter <= 0) {
+                    //stopTimer();
                     //myGame.pass();
                     //...Update the GUI...
                 } else {
-                    i = decrement();
-                    
-                    //System.out.println(i);
+                    counter = decrement(counter);
+                    countDown.setText(Integer.toString(counter));
+                    System.out.println(counter);
                 }
 
             }
@@ -143,28 +142,30 @@ public class GoGameUI extends JFrame {
 	passbtn.addActionListener(new ActionListener()
 	        {
 	            public void actionPerformed(ActionEvent e) {
-	            	if(myGame.getPassCount() >= 1){
-	            		
-	            		switch(myGame.victory()){
-	            		case 1: JOptionPane.showMessageDialog(gamePanel,
+	            	if(myGame.getGameEnd() == true){
+	            		//switch shows popups based on who won
+	            		switch(myGame.victory()){ //returns int code on who won
+	            		case 1: JOptionPane.showMessageDialog(gamePanel, 
 	        				    userInput1 + " is victorious with a score of " + myGame.getScore(false),
 	        				    "Victory",
 	        				    JOptionPane.PLAIN_MESSAGE);
-	            				break;
+	            				break; //blk won
 	            				
 	            		case 2:JOptionPane.showMessageDialog(gamePanel,
 	        				    userInput2 + " is victorious with a score of " + myGame.getScore(true),
 	        				    "Victory",
 	        				    JOptionPane.PLAIN_MESSAGE);
-	            				break;
+	            				break; //wht won
 	            				
 	            		case 3:JOptionPane.showMessageDialog(gamePanel,
 	        				    "It's a draw!",
 	        				    "Victory",
 	        				    JOptionPane.PLAIN_MESSAGE);
-	            				break;
+	            				break; //draw
 	            		}
-	            		
+                                myGame.setGameEnd(); //markus add
+	            		//this method should save the game record to the database
+	            		myGame.recordGame(userInput1, userInput2, Game.getScore(false), Game.getScore(true), Game.victory());
 	            		resetGame();
 	            		remove(gamePanel);
 	            		add(titlePanel);
@@ -264,11 +265,11 @@ public class GoGameUI extends JFrame {
                 //The icon is based on whether the piece is absent, black, or white.
                 Icon icon;
                 if (board[x][y] == 1) {
-                    icon = new ImageIcon("/home/akash/Desktop/JavaApplication4/src/goGame/black.png");
+                    icon = new ImageIcon("C:\\Users\\Markus\\Documents\\NetBeansProjects\\JavaApplication3\\src\\goGame\\black.png");
                 } else if (board[x][y] == 2) {
-                    icon = new ImageIcon("/home/akash/Desktop/JavaApplication4/src/goGame/white.png");
+                    icon = new ImageIcon("C:\\Users\\Markus\\Documents\\NetBeansProjects\\JavaApplication3\\src\\goGame\\white.png");
                 } else {
-                    icon = new ImageIcon("/home/akash/Desktop/JavaApplication4/src/goGame/icon.png");
+                    icon = new ImageIcon("C:\\Users\\Markus\\Documents\\NetBeansProjects\\JavaApplication3\\src\\goGame\\icon.png");
                 }
                 JButton gridButton = new JButton(icon);
                 gridButton.setIconTextGap(0);
@@ -320,9 +321,9 @@ public class GoGameUI extends JFrame {
     }
 
     //because action handlers are dumb.
-    private int decrement() {
-        turnTimeLimit--;
-        return turnTimeLimit;
+    private int decrement(int i) {
+        i--;
+        return i;
     }
 
     //Tera
@@ -382,7 +383,7 @@ public class GoGameUI extends JFrame {
 			//pass new content to the gui
 			showGameUI(board);
 			scoreAmtWht.setText(Integer.toString(myGame.getScore(true)));
-	       	        scoreAmtBlk.setText(Integer.toString(myGame.getScore(false)));
+	       	scoreAmtBlk.setText(Integer.toString(myGame.getScore(false)));
 			if(myGame.getPlayerTurn() == false){
 				playerTurn.setText("Black Player's Turn");
 			}
@@ -419,6 +420,7 @@ public class GoGameUI extends JFrame {
             boardPanel.repaint();
             //show board
             gamePanel.setVisible(true);
+            myGame.reset();//markus made
         }
     // Coded By Tera Benoit
 
@@ -661,6 +663,16 @@ public class GoGameUI extends JFrame {
                 
                   
                 }
+                else {
+                	JOptionPane.showMessageDialog(loginPanel,
+                            "A Username and password registered",
+                            "Login Success",
+                            JOptionPane.PLAIN_MESSAGE);
+                	newUserPanel.setVisible(false);
+                	remove(newUserPanel);
+                	add(titlePanel);
+                	newUserPanel.setVisible(true);
+                }
                 
 //Passes "username" and "password" to the database to create a new user/check if it can.
             
@@ -782,16 +794,22 @@ public class GoGameUI extends JFrame {
         loginTitle.setFont(new Font(loginTitle.getFont().getFontName(), loginTitle.getFont().getStyle(), 90));
 
         JButton loginbtn = new JButton("Login");
+        JButton loginexitbtn = new JButton("Back");
+        
+        //action listener for the exit button
+        loginexitbtn.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		loginPanel.setVisible(false);
+        		remove(loginPanel);
+        		add(titlePanel);
+        		loginPanel.setVisible(true);
+        	}
+        });
 
         //action listeners for the login button
         loginbtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                //myGame.username1=userInput1;
-                  //  myGame.username2=userInput2;
-                    //myGame.password1= userPass1;
-                    //myGame.password2=userPass2;
-                    //myGame.checkUser(); 
-                    
+                     
                 getCreds(usernameField1, usernameField2, passwordField1, passwordField2);
                    
                 if (userInput1.equalsIgnoreCase(userInput2)) { // if the two usernames are the same it throws an error to the user and prevents them from logging in.
@@ -863,6 +881,7 @@ public class GoGameUI extends JFrame {
 
         JPanel bottomFrame = new JPanel();
         bottomFrame.add(loginbtn);
+        bottomFrame.add(loginexitbtn);
 
         bottomFrame.setBorder(new EmptyBorder(10, 10, 200, 10));
 
