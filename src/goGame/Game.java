@@ -6,7 +6,6 @@ Authors: Sanjay And Akash
 */
 
 package goGame;
-
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
@@ -96,22 +95,55 @@ public class Game //Main class
         Author: Akash
         Description: This method helps to update the class variable pass
         */
-        //new code by markus
-        if(playerTurn)
-            player2Score++;
+        
+    	//new code by markus
+        System.out.println(passCount);
+        if(playerTurn) {
+            ++player2Score;
+            System.out.println("test");
+        }
         else
             player1Score++;
-        //end of new code
         
-        if (this.passCount==0){
-               
+        //end of new code
+    	if (this.passCount==0){       
         passCount++;
         playerTurnNext();
         }else{
-         endGame();       
+         this.gameEnd=true;
+         endGame();
+         
         }
-    }    
+    } 
     
+    //author Tera
+    public void recordGame(String player1, String player2, int blkscore, int whtscore, int victoryCode) {
+    	
+    	//make new string in this format Blk: player1 vs wht: player2 with score of blkscore vs wht score
+    	//save string to database
+    	
+    }
+    public void reset(){//markus made
+        player1Score=0;
+        player2Score=0;
+        
+        newAttr=0;
+        passCount=0;
+        blackPieces=0;
+        whitePieces=0;
+        player1Color=1;
+        player2Color=2;
+        timer=connect.gettimer();
+        gmBoard=new GameBoard();
+        list = new ArrayList();
+        
+        list=connect.list; 
+        
+        System.out.println("Here in GAME:");
+        for(int i=0;i<list.size();i++){
+            System.out.println(list.get(i));
+        }
+    }
     public void endGame()
     { 
         /*
@@ -121,10 +153,21 @@ public class Game //Main class
         
         connect.setScore(player1, player1Score, player1Color);
         connect.setScore(player2, player2Score, player2Color);
-        JOptionPane.showMessageDialog(null,"Game is end","GAME END",JOptionPane.INFORMATION_MESSAGE);
+        //JOptionPane.showMessageDialog(null,"Game is end","GAME END",JOptionPane.INFORMATION_MESSAGE);
+        /*
+        passCount=0;
+        player2Score=0;
+        player1Score=0;
+        playerTurn=false;
+        */
         
-        this.gameEnd=true;
-        
+    }
+    
+    public boolean getGameEnd() {
+    	return gameEnd;
+    }
+    public void setGameEnd(){//markus add
+        gameEnd=false;
     }
     
     public int getTimer()
