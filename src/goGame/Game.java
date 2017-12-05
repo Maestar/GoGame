@@ -126,8 +126,6 @@ public class Game //Main class
     public void reset(){//markus made
         player1Score=0;
         player2Score=0;
-        
-        newAttr=0;
         passCount=0;
         player1Color=1;
         player2Color=2;
