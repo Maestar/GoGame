@@ -68,11 +68,11 @@ public class Game //Main class
         */
         
         if(white==false){
-            player1Score+=score;
+            player2Score+=score;
             System.out.println(player1Score+"score blackPlayer "+player1);
         }
         else  
-            player2Score+=score;
+            player1Score+=score;
         System.out.println(player2Score+"score whitePlayer "+player2);
         
         }
